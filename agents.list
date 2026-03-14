@@ -1,0 +1,10 @@
+# Strict isolated agent mapping for Docker architecture
+[director]
+host=openclaw-director
+port=8000
+workspace=/app/workspace
+
+[subagent-1]
+host=openclaw-subagent-1
+port=8000
+workspace=/app/workspace
