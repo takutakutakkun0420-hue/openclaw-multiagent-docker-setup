@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  openclaw-director:
+    image: openclaw/core:v2026.3.7
+    container_name: claw-director
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      # ワークスペースを完全に分離し、スキルの混入を防ぐ
+      - ./workspaces/director:/app/workspace
+      - ./config/agents.list:/app/agents.list:ro
+    environment:
+      - AGENT_ROLE=DIRECTOR
+      - DELEGATION_MODE=strict
+
+  openclaw-subagent-1:
+    image: openclaw/core:v2026.3.7
+    container_name: claw-subagent-1
+    restart: unless-stopped
+    volumes:
+      # サブエージェント用の独立した隔離ワークスペース
+      - ./workspaces/subagent-1:/app/workspace
+    environment:
+      - AGENT_ROLE=WORKER
+      # Dockerの内部ネットワークを利用してsessions_spawnを安定化
+      - DIRECTOR_URL=http://openclaw-director:8000
